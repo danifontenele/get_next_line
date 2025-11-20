@@ -1,0 +1,6 @@
+Hey, I'm a test file
+Get the lines of this file as a test
+You're in the third line
+
+She did't love you
+Last line without new_line
