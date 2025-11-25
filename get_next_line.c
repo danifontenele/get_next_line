@@ -6,90 +6,75 @@
 /*   By: danielalvares <danielalvares@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 23:49:49 by danielalvar       #+#    #+#             */
-/*   Updated: 2025/11/20 01:58:29 by danielalvar      ###   ########.fr       */
+/*   Updated: 2025/11/25 16:36:25 by danielalvar      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	*update_stash(char *stash_buffer)
+static char	*extract_line(char *left_c)
 {
-	char	*new_stash;
-	int		new_len;
-	int		i;
-	int		j;
+	size_t	i;
+	int		len;
+	char	*line;
 
-	i = 0;
-	while (stash_buffer[i] != '\n' && stash_buffer[i] != '\0')
-		i++;
-	if (stash_buffer[i] == '\0')
-	{
-		free (stash_buffer);
-		return (NULL);
-	}
-	i++;
-	new_len = ft_strlen(stash_buffer + i);
-	new_stash = malloc(new_len + 1);
-	if (!new_stash)
-		return (free (stash_buffer), NULL);
-	j = 0;
-	while (stash_buffer[i])
-		new_stash[j++] = stash_buffer[i++];
-	new_stash[j] = '\0';
-	free (stash_buffer);
-	return (new_stash);
-}
-
-static char	*extract_line(char *stash_buffer)
-{
-	char *line;
-	int	len;
-	int	i;
-	
-	if (stash_buffer[0] == '\0')
+	if (!left_c || left_c[0] == '\0')
 		return (NULL);
 	i = 0;
-	while (stash_buffer[i] != '\n' && stash_buffer[i] != '\0')
+	while (left_c[i] && left_c[i] != '\n')
 		i++;
-	if (stash_buffer[i] == '\n')
+	if (left_c[i] == '\n')
 		len = i + 1;
 	else
 		len = i;
-	line = malloc(len + 1);
-	if (!line)
-		return (NULL);
-	i = 0;
-	while (i < len)
-	{
-		line[i] = stash_buffer[i];
-		i++;
-	}
-	line[len] = '\0';
+	line = ft_substr(left_c, 0, len);
 	return (line);
 }
 
-static char	*read_file(char *stash_buffer, int fd)
+static char	*extract_rest(char *left_c)
+{
+	size_t	i;
+	char	*rest;
+
+	if (!left_c)
+		return (NULL);
+	i = 0;
+	while (left_c[i] && left_c[i] != '\n')
+		i++;
+	if (left_c[i] == '\0')
+	{
+		free (left_c);
+		return (NULL);
+	}
+	rest = ft_substr(left_c, i + 1, ft_strlen(left_c) - i - 1);
+	free (left_c);
+	return (rest);
+}
+
+static char	*fill_line_buffer(int fd, char *left_c, char *buffer)
 {
 	ssize_t	nbytes;
-	char	*get_buffer;
+	char	*tmp;
 
-	get_buffer = malloc(BUFFER_SIZE + 1);
 	nbytes = 1;
-	while (!ft_strchr(stash_buffer, '\n') && nbytes > 0)
+	if (!left_c)
+		left_c = ft_strdup("");
+	while (nbytes > 0 && !ft_strchr(left_c, '\n'))
 	{
-		nbytes = read(fd, get_buffer , BUFFER_SIZE);
-		if (nbytes == -1)
+		nbytes = read(fd, buffer, BUFFER_SIZE);
+		if (nbytes == -1) // Deu erro, libera o buffer que resta
 		{
-			free(get_buffer);
+			free (left_c);
 			return (NULL);
 		}
-		get_buffer[nbytes] = '\0';
- 		stash_buffer = ft_strjoin(stash_buffer, get_buffer);
- 		if (!stash_buffer)
-			return (free(get_buffer), NULL);
+		if (nbytes == 0) // Leu tudo
+			break ;
+		buffer[nbytes] = '\0'; // finish the string
+		tmp = left_c;
+		left_c = ft_strjoin(tmp, buffer); // Cola o que restou no inicio do buffer
+		free (tmp);
 	}
-	free (get_buffer);
-	return (stash_buffer);
+	return (left_c);
 }
 
 /**
@@ -105,28 +90,28 @@ static char	*read_file(char *stash_buffer, int fd)
  */
 char	*get_next_line(int fd)
 {
-	static	char	*stash_buffer;
-	char			*line;
-
+	char		*buffer;
+	static char	*left_c;
+	char		*line;
+	
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (!stash_buffer)
-		stash_buffer = calloc(1, 1);
-	stash_buffer = read_file(stash_buffer, fd);
-	if (!stash_buffer)
+	buffer = (char *)malloc((size_t)BUFFER_SIZE + 1);
+	if (!buffer)
 		return (NULL);
-	line = extract_line(stash_buffer);
-	if (!line)
+	left_c = fill_line_buffer(fd, left_c, buffer);
+	if (!left_c)
 	{
-		free (stash_buffer);
-		stash_buffer = NULL;
+		free (buffer);
 		return (NULL);
 	}
-	stash_buffer = update_stash(stash_buffer);
+	free (buffer);
+	line = extract_line(left_c);
+	left_c = extract_rest(left_c);
 	return (line);
 }
 
-int	main(void)
+/* int	main(void)
 {
 	char *line;
 	int fd;
@@ -137,6 +122,33 @@ int	main(void)
 	line = get_next_line(fd);
 	printf("%s", line);
 	free (line);
+	line = get_next_line(fd);
+	printf("%s", line);
+	free (line);
+	line = get_next_line(fd);
+	printf("%s", line);
+	free (line);
+	line = get_next_line(fd);
+	printf("%s", line);
+	free (line);
+	line = get_next_line(fd);
+	printf("%s", line);
+	free (line);
+	line = get_next_line(fd);
+	printf("%s", line);
+	free (line);
+	line = get_next_line(fd);
+	printf("%s", line);
+	free (line);
+	close(fd);
+	printf("%s", line);
+	free (line);
+	close(fd);
+	printf("%s", line);
+	free (line);
+	close(fd);
+	printf("%s", line);
+	free (line);
 	close(fd);
 	return (0);
-}
+} */

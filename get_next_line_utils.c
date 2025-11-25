@@ -6,32 +6,11 @@
 /*   By: danielalvares <danielalvares@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 19:20:38 by danielalvar       #+#    #+#             */
-/*   Updated: 2025/11/20 01:55:04 by danielalvar      ###   ########.fr       */
+/*   Updated: 2025/11/25 16:32:04 by danielalvar      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-void	*ft_calloc(size_t nmemb, size_t size)
-{
-	unsigned char	*ptr;
-	size_t			i;
-	
-	if (nmemb == 0 || size == 0)
-		return (malloc(0));
-	if (size != 0 && nmemb > SIZE_MAX/size)
-		return (NULL);
-	ptr = (void *)malloc(nmemb * size);
-	if (!ptr)
-		return (NULL);
-	i = 0;
-	while (i < nmemb * size)
-	{
-		ptr[i] = 0;
-		i++;
-	}
-	return (ptr);
-}
 
 char	*ft_strchr(char *str, int c)
 {
@@ -57,7 +36,7 @@ char	*ft_strchr(char *str, int c)
 
 int	ft_strlen(char *str)
 {
-	int	len;
+	size_t	len;
 	
 	if (str == NULL)
 		return (0);
@@ -65,6 +44,35 @@ int	ft_strlen(char *str)
 	while (str[len])
 		len++;
 	return (len);
+}
+
+char	*ft_substr(char *s, unsigned int start, size_t len)
+{
+	size_t			i;
+	char			*sub;
+	unsigned int	slen;
+	
+	slen = 0;
+	while (s[slen])
+		slen++;
+	if (!s)
+		return (NULL);
+	if (start >= slen)
+		return (ft_strdup(""));
+	if (len > slen - start)
+		len = slen - start;
+	sub = malloc(len + 1);
+	if (!sub)
+		return (NULL);
+	i = 0;
+	while (i < len && s[start] != '\0')
+	{
+		sub[i] = s[start];
+		start++;
+		i++;
+	}
+	sub[i] = '\0';
+	return (sub);
 }
 
 char	*ft_strdup(char *str)
@@ -108,6 +116,5 @@ char	*ft_strjoin(char *s1, char *s2)
 	while (s2[j])
 		new_str[i++] = s2[j++];
 	new_str[i] = '\0';
-	free (s1);
 	return (new_str);
 }

@@ -6,7 +6,7 @@
 /*   By: danielalvares <danielalvares@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 00:03:14 by danielalvar       #+#    #+#             */
-/*   Updated: 2025/11/20 01:38:38 by danielalvar      ###   ########.fr       */
+/*   Updated: 2025/11/25 13:27:18 by danielalvar      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,11 @@
 # include "stdlib.h"
 
 char	*get_next_line(int fd);
-void	*ft_calloc(size_t nmemb,size_t size);
 char	*ft_strchr(char *str, int c);
+char	*ft_strdup(char *str);
 char	*ft_strjoin(char *s1, char *s2);
 int		ft_strlen(char *str);
+char	*ft_substr(char *s, unsigned int start, size_t len);
 
 #endif
 
