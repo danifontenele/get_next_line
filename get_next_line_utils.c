@@ -1,120 +1,92 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_left_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danielalvares <danielalvares@student.42    +#+  +:+       +#+        */
+/*   By: calvares <calvares@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/16 19:20:38 by danielalvar       #+#    #+#             */
-/*   Updated: 2025/11/25 16:32:04 by danielalvar      ###   ########.fr       */
+/*   Created: 2025/11/27 21:27:13 by calvares          #+#    #+#             */
+/*   Updated: 2025/11/28 17:13:43 by calvares         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_strchr(char *str, int c)
+int	strlen_nl(char *buff)
 {
-	char	chr;
-	char	*s;
-	size_t	i;
+	int	len;
 
-	chr = (char)c;
-	s = (char *)str;
-	if (!s)
-		return (NULL);
-	i = 0;
-	while (s[i])
-	{
-		if (s[i] == chr)
-			return (&s[i]);
-		i++;
-	}
-	if (chr == '\0')
-		return (&s[i]);
-	return (NULL);
-}
-
-int	ft_strlen(char *str)
-{
-	size_t	len;
-	
-	if (str == NULL)
+	if (!buff)
 		return (0);
 	len = 0;
-	while (str[len])
+	while (buff[len] != '\n' && buff[len] != '\0')
+		len++;
+	if (buff[len] == '\n')
 		len++;
 	return (len);
 }
 
-char	*ft_substr(char *s, unsigned int start, size_t len)
+int	has_newline(char *buffer)
 {
-	size_t			i;
-	char			*sub;
-	unsigned int	slen;
-	
-	slen = 0;
-	while (s[slen])
-		slen++;
-	if (!s)
-		return (NULL);
-	if (start >= slen)
-		return (ft_strdup(""));
-	if (len > slen - start)
-		len = slen - start;
-	sub = malloc(len + 1);
-	if (!sub)
-		return (NULL);
+	int	i;
+
+	if (!buffer)
+		return (0);
 	i = 0;
-	while (i < len && s[start] != '\0')
+	while (buffer[i])
 	{
-		sub[i] = s[start];
-		start++;
+		if (buffer[i] == '\n')
+			return (1);
 		i++;
 	}
-	sub[i] = '\0';
-	return (sub);
+	return (0);
 }
 
-char	*ft_strdup(char *str)
+char	*line_joint(char *line, char *buffer)
 {
-	char	*dup;
-	size_t	i;
+	char	*new_line;
+	int		len_line;
+	int		len_buff;
+	int		i;
+	int		j;
 
-	if (!str)
-		return (NULL);
-	dup = malloc(ft_strlen(str) + 1);
-	i = 0;
-	while (str[i])
-	{
-		dup[i] = str[i];
-		i++;
-	}
-	dup[i] = '\0';
-	return (dup);
-}
-
-char	*ft_strjoin(char *s1, char *s2)
-{
-	char *new_str;
-	size_t	i;
-	size_t	j;
-
-	if (!s1)
-		return (ft_strdup(s2));
-	if (!s2)
-		return (NULL);
-	new_str = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
-	if(!new_str)
+	len_line = strlen_nl(line);
+	len_buff = strlen_nl(buffer);
+	new_line = malloc(len_line + len_buff + 1);
+	if (!new_line)
 		return (NULL);
 	i = 0;
-	while (s1[i])
+	while (line && line[i] && i < len_line)
 	{
-		new_str[i] = s1[i];
+		new_line[i] = line[i];
 		i++;
 	}
 	j = 0;
-	while (s2[j])
-		new_str[i++] = s2[j++];
-	new_str[i] = '\0';
-	return (new_str);
+	while (buffer[j] && j < len_buff)
+		new_line[i++] = buffer[j++];
+	new_line[i] = '\0';
+	free (line);
+	return (new_line);
+}
+
+void	set_buffer(char *buffer)
+{
+	int	i;
+	int	j;
+
+	if (!buffer)
+		return ;
+	i = 0;
+	while (buffer[i] != '\0' && buffer[i] != '\n')
+		i++;
+	if (!buffer[i])
+	{
+		buffer[0] = '\0';
+		return ;
+	}
+	i++;
+	j = 0;
+	while(buffer[i])
+		buffer[j++] = buffer[i++];
+	buffer[j] = '\0';
 }

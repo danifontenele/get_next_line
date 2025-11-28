@@ -3,15 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: danielalvares <danielalvares@student.42    +#+  +:+       +#+        */
+/*   By: calvares <calvares@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/30 00:03:14 by danielalvar       #+#    #+#             */
-/*   Updated: 2025/11/25 13:27:18 by danielalvar      ###   ########.fr       */
+/*   Created: 2025/11/27 21:25:22 by calvares          #+#    #+#             */
+/*   Updated: 2025/11/28 17:19:45 by calvares         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 5
+# endif
 
 # include "unistd.h"
 # include "stdio.h"
@@ -20,14 +24,9 @@
 # include "stdlib.h"
 
 char	*get_next_line(int fd);
-char	*ft_strchr(char *str, int c);
-char	*ft_strdup(char *str);
-char	*ft_strjoin(char *s1, char *s2);
-int		ft_strlen(char *str);
-char	*ft_substr(char *s, unsigned int start, size_t len);
+int	    strlen_nl(char *buffer);
+int	    has_newline(char *buffer);
+char	*line_joint(char *line, char *buffer);
+void	set_buffer(char *buffer);
 
-#endif
-
-#ifndef BUFFER_SIZE
-# define BUFFER_SIZE 3
 #endif
