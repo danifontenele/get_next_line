@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: calvares <calvares@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/28 19:43:14 by calvares          #+#    #+#             */
-/*   Updated: 2025/11/28 19:43:45 by calvares         ###   ########.fr       */
+/*   Created: 2025/11/28 20:48:25 by calvares          #+#    #+#             */
+/*   Updated: 2025/11/28 22:53:31 by calvares         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 int	strlen_nl(char *buff)
 {
@@ -19,7 +19,7 @@ int	strlen_nl(char *buff)
 	if (!buff)
 		return (0);
 	len = 0;
-	while (buff[len] != '\n' && buff[len] != '\0')
+	while (buff[len] != '\0' && buff[len] != '\n')
 		len++;
 	if (buff[len] == '\n')
 		len++;
@@ -44,25 +44,25 @@ int	has_newline(char *buffer)
 
 char	*line_joint(char *line, char *buffer)
 {
-	char	*new_line;
-	int		len_line;
-	int		len_buff;
+	int		line_len;
+	int		buffer_len;
 	int		i;
 	int		j;
+	char	*new_line;
 
-	len_line = strlen_nl(line);
-	len_buff = strlen_nl(buffer);
-	new_line = malloc(len_line + len_buff + 1);
+	line_len = strlen_nl(line);
+	buffer_len = strlen_nl(buffer);
+	new_line = malloc(line_len + buffer_len + 1);
 	if (!new_line)
 		return (NULL);
 	i = 0;
-	while (line && line[i] && i < len_line)
+	while (line && line[i] && i < line_len)
 	{
 		new_line[i] = line[i];
 		i++;
 	}
 	j = 0;
-	while (buffer[j] && j < len_buff)
+	while (buffer[j] && j < buffer_len)
 		new_line[i++] = buffer[j++];
 	new_line[i] = '\0';
 	free (line);
@@ -77,16 +77,16 @@ void	set_buffer(char *buffer)
 	if (!buffer)
 		return ;
 	i = 0;
-	while (buffer[i] != '\0' && buffer[i] != '\n')
+	while (buffer[i] != '\n' && buffer[i] != '\0')
 		i++;
-	if (!buffer[i])
+	if (buffer[i] == '\0')
 	{
 		buffer[0] = '\0';
 		return ;
 	}
 	i++;
 	j = 0;
-	while (buffer[i])
+	while (buffer[i] != '\0')
 		buffer[j++] = buffer[i++];
 	buffer[j] = '\0';
 }
