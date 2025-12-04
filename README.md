@@ -1,6 +1,6 @@
 # get_next_line
 
-In this project I had to implement a function that read a file and return the next line always when called.
+In this project I had to implement a function that read an opened file and return the next line always when the function is called.
 A big detail of this function is in the fact it has to consider using different sizes of buffer to analyse the text in blocks, it's important to improve the program efficiency.
 
 ## The static variable
